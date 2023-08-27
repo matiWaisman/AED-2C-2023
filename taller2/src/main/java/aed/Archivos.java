@@ -23,16 +23,18 @@ class Archivos {
 
     void imprimirPiramide(PrintStream salida, int alto) {
         String txt = "";
-        for(int i = 0; i <= alto; i++){
+        for(int i = 0; i < alto; i++){
             txt += devolverNSimbolos(alto - i - 1, ' ');
             txt += devolverNSimbolos(2*i + 1, '*');
             txt += devolverNSimbolos(alto - i - 1, ' ');
             txt += '\n'; 
         }
-        if(alto == 0){
-            txt = " ";
+        if (alto == 0) {
+            salida.print(""); 
         }
-        salida.println(txt);
+        else{
+            salida.println(txt);
+        }
     }
 
     String devolverNSimbolos(int n, char s){
