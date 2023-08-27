@@ -29,12 +29,7 @@ class Archivos {
             txt += devolverNSimbolos(alto - i - 1, ' ');
             txt += '\n'; 
         }
-        if (alto == 0) {
-            salida.print(""); 
-        }
-        else{
-            salida.println(txt);
-        }
+        salida.print(txt);
     }
 
     String devolverNSimbolos(int n, char s){
