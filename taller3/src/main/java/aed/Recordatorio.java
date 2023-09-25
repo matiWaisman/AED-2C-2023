@@ -6,8 +6,15 @@ public class Recordatorio {
     Horario _horario;
     public Recordatorio(String mensaje, Fecha fecha, Horario horario) {
         _mensaje = mensaje;
-        _fecha = fecha.clone();
-        _horario = horario.clone();
+        Fecha fechaBuffer = new Fecha(fecha);
+        _fecha = fechaBuffer;
+        _horario = horario;
+    }
+
+    public Recordatorio(Recordatorio recordatorio){
+        _mensaje = recordatorio.mensaje();
+        _fecha = recordatorio.fecha();
+        _horario = recordatorio.horario();
     }
 
     public Horario horario() {
@@ -15,11 +22,13 @@ public class Recordatorio {
     }
 
     public Fecha fecha() {
-        return _fecha;
+        Fecha fechaBuffer = new Fecha(_fecha);
+        return fechaBuffer;
     }
 
     public String mensaje() {
-        return _mensaje;
+        String mensajebufer = new String(_mensaje);
+        return mensajebufer;
     }
 
     @Override
