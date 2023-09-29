@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>aed</groupId>
-  <artifactId>labo4</artifactId>
+  <artifactId>labo2</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>labo4</name>
+  <name>labo2</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
