@@ -4,65 +4,89 @@ import java.util.*;
 
 public class ListaEnlazada<T> implements Secuencia<T> {
     private Nodo _primero;
-    private int _longitud;
     private Nodo _ultimo;
 
     private class Nodo {
-        T _valor; 
-        Nodo _sig;
-        Nodo _anterior;
+        T valor; 
+        Nodo sig;
+        Nodo anterior;
 
         Nodo (T v){
-            _valor = v;
-            _sig = null;
-            _anterior = null;
+            valor = v;
         }
     }
 
     public ListaEnlazada() {
         _primero = null;
-        _longitud = 0;
         _ultimo = null;
     }
 
     public int longitud() {
-        return _longitud;
+        int i = 0;
+        Nodo puntero = _primero;
+        while(puntero != null){
+            i ++;
+            puntero = puntero.sig;
+        }
+        return i;
     }
 
     public void agregarAdelante(T elem) {
         Nodo nuevo = new Nodo(elem);
-        if(_longitud == 0){
+        if(_primero == null){
+            _ultimo = nuevo;
             _primero = nuevo;
         }
         else{
-            _ultimo = _primero;
-            nuevo._anterior = _primero;
+            _primero.anterior = nuevo;
+            nuevo.sig = _primero;
             _primero = nuevo;
         }
-        _longitud +=1;
     }
 
     public void agregarAtras(T elem) {
         Nodo nuevo = new Nodo(elem);
-        _primero = nuevo;
-        _longitud +=1;
+        if(_ultimo == null){
+            _ultimo = nuevo;
+            _primero = nuevo;
+        }
+        else{
+            nuevo.anterior = _ultimo;
+            _ultimo.sig = nuevo;
+            _ultimo = nuevo;
+        }
     }
 
     public T obtener(int i) {
-        T res;
+        Nodo puntero = _primero;
         for(int j = 0; j < i; j++){
-            _primero = _primero._sig;
+            puntero = puntero.sig;
         }
-        res = _primero._valor;
-        return res;
+        return puntero.valor;
     }
 
     public void eliminar(int i) {
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo aux = _primero;
+        for(int j = 0; j < i && aux != null; j++){
+            aux = aux.sig;
+        }
+        if (aux.anterior != null) {
+            aux.anterior.sig = aux.sig;
+        }
+        if (aux.sig != null) {
+            aux.sig.anterior = aux.anterior;
+        }
+        if(i == 0){
+            _primero = aux.sig;
+        }
     }
 
     public void modificarPosicion(int indice, T elem) {
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo aux = _primero;
+        for(int j = 0; j < indice && aux != null; j++){
+            aux = aux.sig;
+        }
+        aux.valor = elem;
     }
 
     public ListaEnlazada<T> copiar() {
@@ -75,7 +99,15 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     
     @Override
     public String toString() {
-        throw new UnsupportedOperationException("No implementada aun");
+        int i = 0;
+        Nodo puntero = _primero;
+        String res ="";
+        while(puntero != null){
+            res += puntero.valor + ",";
+            i ++;
+            puntero = puntero.sig;
+        }
+        return res;
     }
 
     private class ListaIterador implements Iterador<T> {
@@ -86,22 +118,22 @@ public class ListaEnlazada<T> implements Secuencia<T> {
         }
 
         public boolean haySiguiente() {
-	        return puntero._sig != null;
+	        return puntero.sig != null;
         }
         
         public boolean hayAnterior() {
-	        return puntero._anterior != null;
+	        return puntero.anterior != null;
         }
 
         public T siguiente() {
-            puntero = puntero._sig;
-            return puntero._valor;
+            puntero = puntero.sig;
+            return puntero.valor;
         }
         
 
         public T anterior() {
-            puntero = puntero._anterior;
-            return puntero._valor;
+            puntero = puntero.anterior;
+            return puntero.valor;
         }
     }
 

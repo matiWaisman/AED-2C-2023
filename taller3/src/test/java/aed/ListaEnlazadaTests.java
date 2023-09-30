@@ -91,16 +91,14 @@ class ListaEnlazadaTests {
         lista.agregarAtras(43);
         lista.agregarAtras(44);
         lista.agregarAtras(45);
-
         lista.eliminar(1);
-
         assertEquals(3, lista.longitud());
         assertEquals(42, lista.obtener(0));
         assertEquals(44, lista.obtener(1));
         assertEquals(45, lista.obtener(2));
 
         lista.eliminar(2);
-
+        
         assertEquals(2, lista.longitud());
         assertEquals(42, lista.obtener(0));
         assertEquals(44, lista.obtener(1));
