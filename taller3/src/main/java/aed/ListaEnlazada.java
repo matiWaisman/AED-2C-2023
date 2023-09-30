@@ -99,14 +99,16 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     
     @Override
     public String toString() {
-        int i = 0;
         Nodo puntero = _primero;
-        String res ="";
+        String res ="[";
         while(puntero != null){
-            res += puntero.valor + ",";
-            i ++;
+            res += puntero.valor;
+            if(puntero.sig != null){
+                res += ", ";
+            }
             puntero = puntero.sig;
         }
+        res += "]";
         return res;
     }
 
