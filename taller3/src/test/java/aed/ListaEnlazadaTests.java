@@ -289,7 +289,7 @@ class ListaEnlazadaTests {
         lista.agregarAtras(44);
 
         Iterador<Integer> it = lista.iterador();
-
+        System.out.println("La lista es" + lista);
         assertTrue(it.haySiguiente());
         assertEquals(42, it.siguiente());
         assertTrue(it.haySiguiente());

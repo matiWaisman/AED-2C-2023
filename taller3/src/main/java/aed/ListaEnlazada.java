@@ -90,11 +90,20 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
 
     public ListaEnlazada<T> copiar() {
-        throw new UnsupportedOperationException("No implementada aun");
+        ListaEnlazada<T> res = new ListaEnlazada();
+        Nodo puntero = _primero;
+        for(int i = 0; i < longitud(); i++){
+            res.agregarAtras(puntero.valor);
+            puntero = puntero.sig;
+        }
+        return res;
     }
 
     public ListaEnlazada(ListaEnlazada<T> lista) {
-        throw new UnsupportedOperationException("No implementada aun");
+            Iterador <T> iterador = lista.iterador();   
+            while(iterador.haySiguiente()){
+                this.agregarAtras(iterador.siguiente());
+            }
     }
     
     @Override
@@ -113,29 +122,32 @@ public class ListaEnlazada<T> implements Secuencia<T> {
     }
 
     private class ListaIterador implements Iterador<T> {
-    	Nodo puntero;
+    	private int _indice;
 
         ListaIterador(){
-            puntero = _primero;
+            _indice = 0;
         }
 
         public boolean haySiguiente() {
-	        return puntero.sig != null;
+            return _indice < longitud();
+            
         }
         
         public boolean hayAnterior() {
-	        return puntero.anterior != null;
+            return _indice > 0;
         }
 
         public T siguiente() {
-            puntero = puntero.sig;
-            return puntero.valor;
+            T res = obtener(_indice);
+            _indice++;
+            return res;
         }
         
 
         public T anterior() {
-            puntero = puntero.anterior;
-            return puntero.valor;
+            _indice--;
+            T res = obtener(_indice);
+            return res;
         }
     }
 
