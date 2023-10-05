@@ -1,0 +1,63 @@
+Ejercicio 8
+Tad Tablero {
+    obs t: dict <Int, Int> \\ El primer valor es el numero de la casilla y el segundo si no tiene ningun efecto de moverse la casilla un 0, si es positivo es para adelante y si es negativo es para atras.
+}
+
+Tad Juego {
+    obs tablero: Tablero
+    obs posicionesActuales: <Int x Int> \\ Podria cambiarlo usando solamente el historial y no este posiciones actuales, y cada vez que hay que cambiar agrego una posicion en la lista y para sumarle veo la ultima posicion de la lista
+    obs turno: Int \\ 0 para jugador 1, 1 para jugador 2
+    obs quienGano: Int \\Jugador 1 o jugador 2
+    obs dadosQueTocaron: dict <Int, seq<Int>> \\ La clave 0 es la lista del primer jugador y la segunda para el segundo
+    obs historialPosiciones: dict <Int, seq<Int>> \\ La clave 0 es la lista del primer jugador y la segunda para el segundo
+
+    Proc iniciarJuego(in tablero: Tablero): Juego
+        asegura:{res.tablero.t == tablero and res.quienGano == -1 and res.posicionesActuales == <0,0> and res.turno == 0 and res.dadosQueTocaron == {} and }
+    
+
+    \\Manera 1 copiando todo el tiempo la "cuenta"
+    Proc mover(inout j: Juego, in dados: int): Juego
+        requiere:{j == old(j) and quienGano != 1 and quienGano != 2 and 0<= dados <= 6}
+
+        asegura:{j.dadosQueTocaron[old(j).turno] == old(j).dadosQueTocaron[old(j).turno] + [dados]}
+
+        asegura:{(old(j).posicionesActuales[old(j).turno] + j.tablero.t[old(j).pos[old(j).turno]] + dados < 63) -->  
+                 (j.posicionesActuales[old(j).turno] == old(j).posicionesActuales[old(j).turno] + j.tablero.t[old(j).pos[old(j).turno]] + dados 
+                 and j.turno == alternarTurno(t) and j.quienGano == old(j).quienGano) and 
+                 J.historialPosiciones[old(j).turno] == old(j).historialPosiciones[old(j).turno] + old(j).posicionesActuales[old(j).turno] + j.tablero.t[old(j).pos[old(j).turno]] + dados} \\ Si no me paso
+
+        asegura:{(old(j).posicionesActuales[old(j).turno] + j.tablero.t[old(j).pos[old(j).turno]] + dados >= 63) --> 
+                (j.posicionesActuales[old(j).turno] == 63 and j.quienGano == old(t).turno + 1 and j.turno == old(j).turno) and 
+                J.historialPosiciones[old(j).turno] == old(j).historialPosiciones[old(j).turno] + 63}} \\ Si llego exacto a 63 o me paso asegura quien gana, no hace falta cambiar el turno
+        
+
+    \\Manera 2 haciendo una vez el movimiento y actualizando el observador, y sobre el observador actualizado hacer casos (Esta forma supongo que esta mal)
+    Proc mover(inout j: Juego, in dados: int): Juego
+        requiere:{j == old(j) and quienGano != 1 and quienGano != 2 and  0<= dados <= 6}
+
+        asegura:{j.dadosQueTocaron[old(j).turno] == old(j).dadosQueTocaron[old(j).turno] + [dados]}
+
+        asegura:{J.posicionesActuales[old(j).turno] == old(j).posicionesActuales[old(j).turno] + dados + j.tablero.t[old(j).pos[old(j).turno] + dados]} \\Muevo al jugador
+        
+        asegura:{(J.pos[old(j).turno] >= 63) --> J.quienGano == old(t).turno + 1 and j.turno == old(j).turno} \\ Si al moverlo llego exacto a 63 o me paso. a este igual faltaria actualizarlo para que sea 63 exacto y no mas que 63
+        asegura:{(J.pos[old(j).turno] < 63) --> j.turno == alternarTurno(t) and j.quienGano == old(j).quienGano} \\ Si no llego a ganar alterno el turno
+
+        asegura:{J.historialPosiciones[old(j).turno] == old(j).historialPosiciones[old(j).turno][old(j).turno] + J.posicionesActuales[old(j).turno]}
+
+    aux alternarTurno(int t: Tablero):Z {if old(t).turno = 0 then 1 else 0 fi}
+
+    Proc queDadosTocaron(in j: Juego, in turno: int, in jugador: int): int \\ Jugador es 1 o 2
+        requiere:{turno < |j.dadosQueTocaron[jugador - 1]|}
+
+        asegura:{(turno = |j.dadosQueTocaron[jugador - 1]| - 1) and j.quienGano = jugador  --> (res == j.dadosQueTocaron[jugador - 1][turno])} \\ Si me piden el ultimo turno y el jugador llego a tirar
+
+        asegura:{(turno = |j.dadosQueTocaron[jugador - 1]| - 1 and j.quienGano != jugador) --> (res == 0)} \\ Si me piden el ultimo turno y el jugador no llego a tirar
+
+        asegura:{(turno < |j.dadosQueTocaron[jugador - 1]| - 1) --> (res == j.dadosQueTocaron[jugador - 1][turno])} \\ Si me piden un turno distinto al ultimo donde los dos llegaron a tirar
+
+    
+    Proc posicionEnTurno(in j: Juego, in turno: int, in jugador: int): int \\ Jugador es 1 o 2
+        requiere:{turno < |j.historialPosiciones[jugador - 1]|}
+
+        asegura:{res == j.historialPosiciones[jugador - 1][turno]}
+}
