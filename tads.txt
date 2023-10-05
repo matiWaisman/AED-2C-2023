@@ -92,12 +92,12 @@ Tad Pizzeria{
     proc despacharPedido(inout p: Pizzeria, in id: idPedido): Pizzeria \\ Sale un pedido de la cocina, decido si lo envio o lo hago esperar pq hay mas pedidos de esa zona
         requiere:{p == old(p) and id in p.pedidosEnCocina}
         
-        \\ Hay mas pedidos de esa zona que no estan terminados
+        \\ Hay mas pedidos de esa zona en la cocina
         asegura:{(cantApariciones(zonaDeDireccion(direccionPedido(id)), old(p).pedidosEnCocina) - 1 > 0) --> 
                  (p.pedidosEnCocina == old(p).pedidosEnCocina - id and p.pedidosEsperando == old(p).pedidosEsperando + id)
                 }
 
-        \\ Hay pedidos de esa zona esperando y el que acabo de terminar hace que los pueda enviar
+        \\ No hay mas pedidos de esa misma zona en la cocina
         asegura:{(cantApariciones(zonaDeDireccion(direccionPedido(id)), old(p).pedidosEnCocina) - 1 == 0) -->
                  (p.pedidosEnCocina == old(p).pedidosEnCocina - id and 
                  forall: e:idPedido:: e in old(p).pedidosEsperando and zonaDeId(e) = zonaDeId(id) --> e not in p.pedidosEsperando)
