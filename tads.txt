@@ -12,7 +12,7 @@ Tad Juego {
     obs historialPosiciones: dict <Int, seq<Int>> \\ La clave 0 es la lista del primer jugador y la segunda para el segundo
 
     Proc iniciarJuego(in tablero: Tablero): Juego
-        asegura:{res.tablero.t == tablero and res.quienGano == -1 and res.posicionesActuales == <0,0> and res.turno == 0 and res.dadosQueTocaron == {} and }
+        asegura:{res.tablero.t == tablero and res.quienGano == -1 and res.posicionesActuales == <0,0> and res.turno == 0 and res.dadosQueTocaron == {} and res.historialPosiciones == {}}
     
 
     \\Manera 1 copiando todo el tiempo la "cuenta"
@@ -60,4 +60,56 @@ Tad Juego {
         requiere:{turno < |j.historialPosiciones[jugador - 1]|}
 
         asegura:{res == j.historialPosiciones[jugador - 1][turno]}
+}
+
+Ejercicio practica parcial AlgoConQueso
+
+Tad Pizzeria{
+    obs pedidosEnCocina: conj<idPedido> \\Id pedido es un int
+    obs pedidosEsperando: conj<idPedido> \\Id pedido es un int
+    obs historialPedidos: dict<Direccion, int> \\Direccion y la cantidad que pidio
+    obs direccionPedido(e:idPedido): Direccion
+    obs cantPedido(e:idPedido): int
+    obs zonaDeDireccion(e:Direccion): Zona
+    obs zonaDeId(e: id): Zona
+
+    proc crearPizzeria(): Pizzeria
+        asegura:{res.pedidosEnCocina == {} and res.pedidosEsperando == {} and res.historialPedidos == {}}
+
+    proc recibirPedido(inout p: Pizzeria, in id: idPedido): Pizzeria
+        requiere:{p == old(p) and id not in p.pedidosEnCocina and id not in p.pedidosEsperando}
+
+        asegura:{p.pedidosEnCocina == old(p).pedidosEnCocina + id}
+
+        \\ Si ya hicieron un pedido de esa direccion sumo
+        asegura:{(direccionPedido(id) in old(p).historialPedidos) --> 
+                 p.historialPedidos == setKey(old(p).historialPedidos, direccionPedido(id), old(p).historialPedidos + cantPedido(id))}
+
+        \\ Si no hicieron un pedido de esa direccion inicializo
+        asegura:{(direccionPedido(id) not in old(p).historialPedidos) --> 
+                 p.historialPedidos == setKey(old(p).historialPedidos, direccionPedido(id), cantPedido(id))}
+
+    proc despacharPedido(inout p: Pizzeria, in id: idPedido): Pizzeria \\ Sale un pedido de la cocina, decido si lo envio o lo hago esperar pq hay mas pedidos de esa zona
+        requiere:{p == old(p) and id in p.pedidosEnCocina}
+        
+        \\ Hay mas pedidos de esa zona que no estan terminados
+        asegura:{(cantApariciones(zonaDeDireccion(direccionPedido(id)), old(p).pedidosEnCocina) - 1 > 0) --> 
+                 (p.pedidosEnCocina == old(p).pedidosEnCocina - id and p.pedidosEsperando == old(p).pedidosEsperando + id)
+                }
+
+        \\ Hay pedidos de esa zona esperando y el que acabo de terminar hace que los pueda enviar
+        asegura:{(cantApariciones(zonaDeDireccion(direccionPedido(id)), old(p).pedidosEnCocina) - 1 == 0) -->
+                 (p.pedidosEnCocina == old(p).pedidosEnCocina - id and 
+                 forall: e:idPedido:: e in old(p).pedidosEsperando and zonaDeId(e) = zonaDeId(id) --> e not in p.pedidosEsperando)
+                }
+
+    proc mayorCantidadDeLaZona(in p: Pizzeria, in z: Zona): Direccion
+        requiere:{True}
+
+        asegura:{forall d: Direccion:: d E j.historialPedidos and zonaDeDireccion(d) = Zona -->L
+                j.historialPedido[res] >= j.historialPedido[d]}
+
+    aux cantidadApariciones(e: zona, c: conj<idPedido>):Z{
+        Escribir en papel
+    }
 }
