@@ -70,7 +70,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public T maximo(){
-        if(_raiz.izq != null){ // Si existe una rama derecha a la raiz va a estar ahi, asi que no hace falta arrancar x la raiz
+        if(_raiz.derecha != null){ // Si existe una rama derecha a la raiz va a estar ahi, asi que no hace falta arrancar x la raiz
             return calcularMaximo(_raiz.derecha, _raiz.valor);
         }
         else{ // Si no tiene rama derecha es pq el mayor es la raiz
@@ -125,12 +125,12 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public boolean pertenece(T elem){
-        //if(elem.compareTo(maximo()) > 0 || elem.compareTo(minimo()) < 0){
-        //    return false;
-        //}
-        //else{
+        if(elem.compareTo(maximo()) > 0 || elem.compareTo(minimo()) < 0){
+            return false;
+        }
+        else{
             return calcularPertenece(_raiz, elem);
-        //}
+        }
     }
 
     private boolean calcularPertenece(Nodo actual, T elem){
@@ -149,11 +149,120 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public void eliminar(T elem){
-        throw new UnsupportedOperationException("No implementada aun");
+        Nodo aEliminar = encontrarNodo(_raiz, elem);
+        Nodo nodoPadre = encontrarPadre(_raiz, aEliminar);
+        if (nodoPadre == null) { // Si hay que eliminar la raíz
+            if (aEliminar.izq != null) {
+                _raiz = aEliminar.izq;
+                _raiz.derecha = aEliminar.derecha;
+            } else if (aEliminar.derecha != null) {
+                _raiz = aEliminar.derecha;
+                _raiz.izq = aEliminar.izq;
+            } else {
+                _raiz = null;
+            }
+        }
+        else if(aEliminar.izq == null && aEliminar.derecha == null){ // Si el nodo a eliminar no tiene hijos
+            if(aEliminar.valor.compareTo(nodoPadre.valor) > 0){ // Si el hijo es mayor elimino el de la derecha
+                nodoPadre.derecha = null;
+            } 
+            else{ // Si el hijo es menor elimino el de la izquierda
+                nodoPadre.izq = null; 
+            }  
+        }
+        else if(aEliminar.izq != null ^ aEliminar.derecha != null){ // Tiene un solo hijo 
+            if(aEliminar.izq != null){
+                nodoPadre.izq = aEliminar.izq;
+            }
+            if(aEliminar.derecha != null){
+                nodoPadre.derecha = aEliminar.derecha;
+            }
+        }
+        else if(aEliminar.izq != null && aEliminar.derecha != null){ // Tiene dos hijos
+            if(nodoPadre.izq == aEliminar){ // Si tengo que eliminar del lado de los menores
+                Nodo nodoMinimo = encontrarNodo(aEliminar, calcularMinimo(aEliminar.izq, aEliminar.izq.valor));
+                Nodo padreMinimo = encontrarPadre(nodoPadre, nodoMinimo);
+                nodoPadre.izq = nodoMinimo;
+                padreMinimo.izq = nodoMinimo.izq;
+                nodoMinimo.derecha = aEliminar.derecha;
+                nodoMinimo.izq = aEliminar.izq;
+            }
+            if(nodoPadre.derecha == aEliminar){ // Si tengo que eliminar del lado de los mayores
+                Nodo nodoMaximo = encontrarNodo(aEliminar, calcularMaximo(aEliminar.derecha, aEliminar.derecha.valor));
+                Nodo padreMaximo = encontrarPadre(nodoPadre, nodoMaximo);
+                nodoPadre.derecha = nodoMaximo;
+                padreMaximo.derecha = nodoMaximo.derecha;
+                nodoMaximo.derecha = aEliminar.derecha;
+                nodoMaximo.izq = aEliminar.izq;
+            }
+        }
     }
 
-    public String toString(){
-        throw new UnsupportedOperationException("No implementada aun");
+    private Nodo encontrarNodo(Nodo actual, T valor){
+        if(actual != null){
+            if(actual.valor.equals(valor)){
+                return actual;
+            }
+            if(valor.compareTo(actual.valor) > 0){ // Si es mayor busco por derecha
+                return encontrarNodo(actual.derecha, valor);
+            }
+            if(valor.compareTo(actual.valor) < 0){ // Si es menor busco por izquierda
+                return encontrarNodo(actual.izq, valor);
+            }
+        }
+        return null;
+    }
+
+    private Nodo encontrarPadre(Nodo actual, Nodo hijo){
+        if(actual == null){
+            return null;
+        }
+        else{
+            if(hijo.valor.compareTo(actual.valor) > 0){ // Si es mas grande voy por derecha
+                if(hijo == actual.derecha){
+                    return actual;
+                }
+                else{
+                    return encontrarPadre(actual.derecha, hijo);
+                }
+            }
+            else{ // Si es mas chico voy por izquierda
+                if(hijo == actual.izq){
+                    return actual;
+                }
+                else{
+                    return encontrarPadre(actual.izq, hijo);
+                }
+            }
+        }
+    }
+
+    public String toString() {
+        String result = calcularToString(_raiz);
+        if (result.endsWith(",")) {
+            result = result.substring(0, result.length() - 1); // Eliminar la coma final
+        }
+        return "{" + result + "}";
+    }
+
+    private String calcularToString(Nodo actual) {
+        if(actual == null){
+            return "";
+        }
+        String hojaIzquierda = calcularToString(actual.izq);
+        String hojaDerecha = calcularToString(actual.derecha);
+        if(hojaIzquierda != "" && hojaDerecha != ""){
+            return hojaIzquierda + "," + actual.valor + "," + hojaDerecha; 
+        }
+        else if(hojaIzquierda != ""){
+            return hojaIzquierda + "," + actual.valor;
+        }
+        else if(hojaDerecha != ""){
+            return actual.valor + "," + hojaDerecha;
+        }
+        else {  
+            return String.valueOf(actual.valor);
+        }
     }
 
     private class ABB_Iterador implements Iterador<T> {
