@@ -150,7 +150,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
 
     public void eliminar(T elem){
         Nodo aEliminar = encontrarNodo(_raiz, elem);
-        Nodo nodoPadre = encontrarPadre(_raiz, aEliminar);
+        Nodo nodoPadre = aEliminar.padre;
         if (nodoPadre == null) { // Si hay que eliminar la raíz
             if (aEliminar.izq != null) {
                 _raiz = aEliminar.izq;
@@ -181,7 +181,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         else if(aEliminar.izq != null && aEliminar.derecha != null){ // Tiene dos hijos
             if(nodoPadre.izq == aEliminar){ // Si tengo que eliminar del lado de los menores
                 Nodo nodoMinimo = encontrarNodo(aEliminar, calcularMinimo(aEliminar.izq, aEliminar.izq.valor));
-                Nodo padreMinimo = encontrarPadre(nodoPadre, nodoMinimo);
+                Nodo padreMinimo = nodoMinimo.padre;
                 nodoPadre.izq = nodoMinimo;
                 padreMinimo.izq = nodoMinimo.izq;
                 nodoMinimo.derecha = aEliminar.derecha;
@@ -189,7 +189,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             }
             if(nodoPadre.derecha == aEliminar){ // Si tengo que eliminar del lado de los mayores
                 Nodo nodoMaximo = encontrarNodo(aEliminar, calcularMaximo(aEliminar.derecha, aEliminar.derecha.valor));
-                Nodo padreMaximo = encontrarPadre(nodoPadre, nodoMaximo);
+                Nodo padreMaximo = nodoMaximo.padre;
                 nodoPadre.derecha = nodoMaximo;
                 padreMaximo.derecha = nodoMaximo.derecha;
                 nodoMaximo.derecha = aEliminar.derecha;
@@ -213,30 +213,6 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return null;
     }
 
-    private Nodo encontrarPadre(Nodo actual, Nodo hijo){
-        if(actual == null){
-            return null;
-        }
-        else{
-            if(hijo.valor.compareTo(actual.valor) > 0){ // Si es mas grande voy por derecha
-                if(hijo == actual.derecha){
-                    return actual;
-                }
-                else{
-                    return encontrarPadre(actual.derecha, hijo);
-                }
-            }
-            else{ // Si es mas chico voy por izquierda
-                if(hijo == actual.izq){
-                    return actual;
-                }
-                else{
-                    return encontrarPadre(actual.izq, hijo);
-                }
-            }
-        }
-    }
-
     public String toString() {
         String result = calcularToString(_raiz);
         if (result.endsWith(",")) {
@@ -249,36 +225,54 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         if(actual == null){
             return "";
         }
-        String hojaIzquierda = calcularToString(actual.izq);
-        String hojaDerecha = calcularToString(actual.derecha);
-        if(hojaIzquierda != "" && hojaDerecha != ""){
-            return hojaIzquierda + "," + actual.valor + "," + hojaDerecha; 
-        }
-        else if(hojaIzquierda != ""){
-            return hojaIzquierda + "," + actual.valor;
-        }
-        else if(hojaDerecha != ""){
-            return actual.valor + "," + hojaDerecha;
-        }
-        else {  
-            return String.valueOf(actual.valor);
+        else{
+            return calcularToString(actual.izq) + actual.valor.toString() + "," + calcularToString(actual.derecha);
         }
     }
 
     private class ABB_Iterador implements Iterador<T> {
         private Nodo _actual;
 
+        public ABB_Iterador() {
+            _actual = encontrarNodo(_raiz, minimo());
+        }
+
         public boolean haySiguiente() {            
-            return _actual.izq != null || _actual.derecha != null;
+            return _actual.valor != maximo();
         }
     
         public T siguiente() {
-            throw new UnsupportedOperationException("No implementada aun");
+         T valorSiguiente;
+          if(_actual.valor == minimo()){
+            valorSiguiente = minimo();
+          }
+          else{
+            valorSiguiente = calcularSiguiente(_actual);
+          }
+          _actual = encontrarNodo(_raiz, valorSiguiente);
+          return valorSiguiente;
         }
+
+        private T calcularSiguiente(Nodo actual){
+            if(actual.izq == null){
+               return calcularMinimo(actual.izq, actual.izq.valor);
+            }
+            if(actual.derecha != null){
+                if(actual.valor.compareTo(actual.derecha.valor) < 0){ 
+                    return calcularMinimo(actual.derecha, actual.derecha.valor);
+                } 
+            }
+            return actual.padre.valor;
+        }
+
     }
 
     public Iterador<T> iterador() {
         return new ABB_Iterador();
+    }
+
+    public T siguiente(){
+        return minimo();
     }
 
 }
