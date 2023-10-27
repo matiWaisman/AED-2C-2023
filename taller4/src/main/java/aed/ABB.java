@@ -179,21 +179,20 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             }
         }
         else if(aEliminar.izq != null && aEliminar.derecha != null){ // Tiene dos hijos
-            if(nodoPadre.izq == aEliminar){ // Si tengo que eliminar del lado de los menores
-                Nodo nodoMinimo = encontrarNodo(aEliminar, calcularMinimo(aEliminar.izq, aEliminar.izq.valor));
-                Nodo padreMinimo = nodoMinimo.padre;
-                nodoPadre.izq = nodoMinimo;
-                padreMinimo.izq = nodoMinimo.izq;
-                nodoMinimo.derecha = aEliminar.derecha;
-                nodoMinimo.izq = aEliminar.izq;
-            }
-            if(nodoPadre.derecha == aEliminar){ // Si tengo que eliminar del lado de los mayores
-                Nodo nodoMaximo = encontrarNodo(aEliminar, calcularMaximo(aEliminar.derecha, aEliminar.derecha.valor));
-                Nodo padreMaximo = nodoMaximo.padre;
-                nodoPadre.derecha = nodoMaximo;
-                padreMaximo.derecha = nodoMaximo.derecha;
-                nodoMaximo.derecha = aEliminar.derecha;
-                nodoMaximo.izq = aEliminar.izq;
+            if(nodoPadre.izq == aEliminar) { // El nodo está a la izquierda, busco el máximo de la izquierda
+                Nodo maxIzquierda = encontrarNodo(aEliminar, calcularMaximo(aEliminar.izq, aEliminar.izq.valor));
+                Nodo padreMaximoIzquierda = maxIzquierda.padre; 
+                padreMaximoIzquierda.izq = maxIzquierda.derecha;
+                maxIzquierda.izq = aEliminar.izq;
+                maxIzquierda.derecha = aEliminar.derecha;
+                nodoPadre.izq = maxIzquierda;
+            } else { // El nodo está a la derecha, busco el mínimo de la derecha
+                Nodo minDerecha = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
+                Nodo padreMinimoDerecha = minDerecha.padre;
+                padreMinimoDerecha.izq = minDerecha.derecha; 
+                minDerecha.izq = aEliminar.izq;
+                minDerecha.derecha = aEliminar.derecha;
+                nodoPadre.derecha = minDerecha;
             }
         }
     }
