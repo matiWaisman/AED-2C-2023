@@ -6,6 +6,7 @@ import java.util.*;
 // elem1.compareTo(elem2) devuelve un entero. Si es mayor a 0, entonces elem1 > elem2
 public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     private Nodo _raiz;
+    private int cantElementos = 0;
 
     private class Nodo {
     private T valor;
@@ -26,18 +27,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public int cardinal() {
-        return calcularCardinal(_raiz);
-    }
-
-    private int calcularCardinal(Nodo actual) {
-        if(actual == null){
-            return 0;
-        }
-        if (actual.valor == null) {
-            return 0;
-        } else {
-            return calcularCardinal(actual.derecha) + calcularCardinal(actual.izq) + 1;
-        }
+        return cantElementos;
     }
 
     public T minimo(){
@@ -101,9 +91,14 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     public void insertar(T elem){
         if(_raiz.valor == null){
             _raiz.valor = elem;
+            cantElementos += 1;
         }
         else{
+            if(pertenece(elem) == false){
+                cantElementos += 1;
+            }
             insertarRecursivo(elem, _raiz);
+            
         }
     }
 
@@ -151,6 +146,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     public void eliminar(T elem){
         Nodo aEliminar = encontrarNodo(_raiz, elem);
         Nodo nodoPadre = aEliminar.padre;
+        cantElementos -= 1;
         if (nodoPadre == null) { // Si hay que eliminar la raíz
             if (aEliminar.izq != null) {
                 _raiz = aEliminar.izq;
@@ -182,16 +178,20 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             if(nodoPadre.izq == aEliminar) { // El nodo está a la izquierda, busco el máximo de la izquierda
                 Nodo maxIzquierda = encontrarNodo(aEliminar, calcularMaximo(aEliminar.izq, aEliminar.izq.valor));
                 Nodo padreMaximoIzquierda = maxIzquierda.padre; 
-                padreMaximoIzquierda.izq = maxIzquierda.derecha;
-                maxIzquierda.izq = aEliminar.izq;
+                if(padreMaximoIzquierda != aEliminar){
+                    padreMaximoIzquierda.izq = maxIzquierda.derecha;
+                    maxIzquierda.izq = aEliminar.izq;
+                }
                 maxIzquierda.derecha = aEliminar.derecha;
                 nodoPadre.izq = maxIzquierda;
             } else { // El nodo está a la derecha, busco el mínimo de la derecha
                 Nodo minDerecha = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
                 Nodo padreMinimoDerecha = minDerecha.padre;
-                padreMinimoDerecha.izq = minDerecha.derecha; 
+                if(padreMinimoDerecha != aEliminar){
+                    padreMinimoDerecha.izq = minDerecha.derecha;
+                    minDerecha.derecha = aEliminar.derecha;
+                }
                 minDerecha.izq = aEliminar.izq;
-                minDerecha.derecha = aEliminar.derecha;
                 nodoPadre.derecha = minDerecha;
             }
         }
