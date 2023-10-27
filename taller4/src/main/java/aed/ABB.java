@@ -233,7 +233,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         private Nodo _actual;
 
         public ABB_Iterador() {
-            _actual = encontrarNodo(_raiz, minimo());
+            _actual = null;
         }
 
         public boolean haySiguiente() {            
@@ -242,7 +242,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     
         public T siguiente() {
          T valorSiguiente;
-          if(_actual.valor == minimo()){
+          if(_actual == null){
             valorSiguiente = minimo();
           }
           else{
@@ -253,25 +253,21 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         }
 
         private T calcularSiguiente(Nodo actual){
-            if(actual.izq == null){
-               return calcularMinimo(actual.izq, actual.izq.valor);
-            }
             if(actual.derecha != null){
-                if(actual.valor.compareTo(actual.derecha.valor) < 0){ 
-                    return calcularMinimo(actual.derecha, actual.derecha.valor);
-                } 
+               return calcularMinimo(actual.derecha, actual.derecha.valor);
             }
-            return actual.padre.valor;
+            Nodo padreActual = actual.padre;
+            while(padreActual != null && actual == padreActual.derecha){
+                actual = padreActual;
+                padreActual = padreActual.padre;
+            }
+            return padreActual.valor;
         }
 
     }
 
     public Iterador<T> iterador() {
         return new ABB_Iterador();
-    }
-
-    public T siguiente(){
-        return minimo();
     }
 
 }
