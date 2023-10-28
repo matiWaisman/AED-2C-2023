@@ -178,21 +178,22 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             if(nodoPadre.izq == aEliminar) { // El nodo está a la izquierda, busco el máximo de la izquierda
                 Nodo maxIzquierda = encontrarNodo(aEliminar, calcularMaximo(aEliminar.izq, aEliminar.izq.valor));
                 Nodo padreMaximoIzquierda = maxIzquierda.padre; 
-                if(padreMaximoIzquierda != aEliminar){
-                    padreMaximoIzquierda.izq = maxIzquierda.derecha;
-                    maxIzquierda.izq = aEliminar.izq;
+                if(padreMaximoIzquierda == aEliminar){
+                    aEliminar.izq = maxIzquierda.izq;
                 }
-                maxIzquierda.derecha = aEliminar.derecha;
-                nodoPadre.izq = maxIzquierda;
+                else{
+                    padreMaximoIzquierda.derecha = maxIzquierda.izq;
+                }
+                aEliminar.valor = maxIzquierda.valor;
             } else { // El nodo está a la derecha, busco el mínimo de la derecha
                 Nodo minDerecha = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
                 Nodo padreMinimoDerecha = minDerecha.padre;
-                if(padreMinimoDerecha != aEliminar){
+                if (padreMinimoDerecha == aEliminar) {
+                    aEliminar.derecha = minDerecha.derecha;
+                } else {
                     padreMinimoDerecha.izq = minDerecha.derecha;
-                    minDerecha.derecha = aEliminar.derecha;
                 }
-                minDerecha.izq = aEliminar.izq;
-                nodoPadre.derecha = minDerecha;
+                aEliminar.valor = minDerecha.valor;
             }
         }
     }
