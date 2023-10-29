@@ -126,7 +126,10 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     public boolean pertenece(T elem){
-        if(maximo() == null || minimo() == null){
+        if(_raiz == null){
+            return false;
+        }
+        if(_raiz.valor == null){
             return false;
         }
         if(elem.compareTo(maximo()) > 0 || elem.compareTo(minimo()) < 0){
@@ -156,29 +159,18 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         Nodo aEliminar = encontrarNodo(_raiz, elem);
         Nodo nodoPadre = aEliminar.padre;
         cantElementos -= 1;
+        Boolean esRaiz = false;
+        if(aEliminar.valor.compareTo(_raiz.valor) == 0){ 
+            esRaiz = true;  
+        }
         if(_raiz == null){
             cantElementos = 0;
         }
-        if (nodoPadre == null) { // Si hay que eliminar la raíz
-            if (aEliminar.izq != null) {
-                aEliminar.izq.padre = null;
-                Nodo minDerecha = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
-                minDerecha.izq = aEliminar.izq.derecha;
-                _raiz = aEliminar.izq;
-                _raiz.derecha = aEliminar.derecha;
-                
-            } else if (aEliminar.derecha != null) {
-                aEliminar.derecha.padre = null;
-                Nodo maxIzquierda = encontrarNodo(aEliminar, calcularMaximo(aEliminar.izq, aEliminar.izq.valor));
-                maxIzquierda.derecha = aEliminar.derecha.izq;
-                _raiz = aEliminar.derecha;
-                _raiz.izq = aEliminar.izq;
-            } else {
+        else if(aEliminar.izq == null && aEliminar.derecha == null){ // Si el nodo a eliminar no tiene hijos
+            if(esRaiz){
                 _raiz = null;
             }
-        }
-        else if(aEliminar.izq == null && aEliminar.derecha == null){ // Si el nodo a eliminar no tiene hijos
-            if(aEliminar.valor.compareTo(nodoPadre.valor) > 0){ // Si el hijo es mayor elimino el de la derecha
+            else if(aEliminar.valor.compareTo(nodoPadre.valor) > 0){ // Si el hijo es mayor elimino el de la derecha
                 nodoPadre.derecha = null;
             } 
             else{ // Si el hijo es menor elimino el de la izquierda
@@ -186,22 +178,51 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             }  
         }
         else if(aEliminar.izq != null ^ aEliminar.derecha != null){ // Tiene un solo hijo 
-            if(aEliminar.izq != null){
-                nodoPadre.izq = aEliminar.izq;
+            if(aEliminar.izq != null){ // Tiene hijo izquierdo
+                if (esRaiz){
+                    _raiz = _raiz.izq; 
+                    _raiz.padre = null;
+                }
+                else if(aEliminar.valor.compareTo(aEliminar.padre.valor) < 0){  
+                    aEliminar.padre.izq = aEliminar.izq;
+                    aEliminar.izq.padre = aEliminar.padre;
+                } else{
+                    aEliminar.padre.derecha = aEliminar.izq;
+                    aEliminar.izq.padre = aEliminar.padre;
+                }
             }
-            if(aEliminar.derecha != null){
-                nodoPadre.derecha = aEliminar.derecha;
+            if(aEliminar.derecha != null){ // Tiene hijo derecho
+                if (esRaiz){
+                    _raiz = _raiz.derecha; 
+                    _raiz.padre = null;
+                }
+                else if(aEliminar.valor.compareTo(aEliminar.padre.valor) < 0){
+                    aEliminar.padre.izq = aEliminar.derecha;
+                    aEliminar.derecha.padre = aEliminar.padre;
+                }
+                else{
+                    aEliminar.padre.derecha = aEliminar.derecha;
+                    aEliminar.derecha.padre = aEliminar.padre;
+                }
             }
         }
         else if(aEliminar.izq != null && aEliminar.derecha != null){ // Tiene dos hijos
-            Nodo minDerecha = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
-            Nodo padreMinimoDerecha = minDerecha.padre;
-            if (padreMinimoDerecha == aEliminar) {
-                aEliminar.derecha = minDerecha.derecha;
+            Nodo suc = encontrarNodo(aEliminar, calcularMinimo(aEliminar.derecha, aEliminar.derecha.valor));
+            if (suc.padre == aEliminar) {
+                suc.padre.derecha  = suc.derecha;
+                if(suc.derecha != null){
+                    suc.derecha.padre = suc.padre;
+                }
             } else {
-                padreMinimoDerecha.izq = minDerecha.derecha;
+                suc.padre.izq = suc.derecha;
+                if (suc.derecha != null){
+                    suc.derecha.padre = suc.padre;
+                }
             }
-            aEliminar.valor = minDerecha.valor;
+            aEliminar.valor = suc.valor;
+            if (esRaiz){
+                _raiz = aEliminar;
+            }
         }
     }
 
