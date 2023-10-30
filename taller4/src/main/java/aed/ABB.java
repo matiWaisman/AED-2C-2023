@@ -299,4 +299,34 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return new ABB_Iterador();
     }
 
+    // Extra Ejercicio 2 guia 7
+    public ABB<T> interseccion(ABB<T> a1, ABB<T> a2){
+        ABB<T> res = new ABB<T>();
+        Iterador<T> iterador = a1.iterador();
+        while(iterador.haySiguiente()){
+            T valorActual = iterador.siguiente();
+            if(a2.pertenece(valorActual)){
+                res.insertar(valorActual);
+            }
+        }  
+        return res;
+    }
+
+    public ABB<T> union(ABB<T> a1, ABB<T> a2){
+        ABB<T> res = new ABB<T>();
+        // Copia los elementos de a1 al nuevo árbol res
+        Iterador<T> iteradorA1 = a1.iterador();
+        while (iteradorA1.haySiguiente()) {
+            T valorActual = iteradorA1.siguiente();
+            res.insertar(valorActual);
+        }
+        // Agrega los elementos de a2 al nuevo árbol res
+        Iterador<T> iteradorA2 = a2.iterador();
+        while (iteradorA2.haySiguiente()) {
+            T valorActual = iteradorA2.siguiente();
+            res.insertar(valorActual);
+        }
+        return res;
+    }
+
 }
