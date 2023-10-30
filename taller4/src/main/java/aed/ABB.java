@@ -125,7 +125,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         }
     }
 
-    public boolean pertenece(T elem){
+    public boolean  pertenece(T elem){
         if(_raiz == null){
             return false;
         }
@@ -300,31 +300,31 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     }
 
     // Extra Ejercicio 2 guia 7
-    public ABB<T> interseccion(ABB<T> a1, ABB<T> a2){
+    public ABB<T> interseccion(ABB<T> a1, ABB<T> a2){ // Complejidad O(N(log(N))^2) o O(N^3) arbol dejenerado
         ABB<T> res = new ABB<T>();
         Iterador<T> iterador = a1.iterador();
-        while(iterador.haySiguiente()){
+        while(iterador.haySiguiente()){ //O(N)
             T valorActual = iterador.siguiente();
-            if(a2.pertenece(valorActual)){
-                res.insertar(valorActual);
+            if(a2.pertenece(valorActual)){ // O(N) arbol degenerado / O(Log(N))
+                res.insertar(valorActual); // O(N) arbol dejenerado / O(Log(N))
             }
         }  
         return res;
     }
 
-    public ABB<T> union(ABB<T> a1, ABB<T> a2){
+    public ABB<T> union(ABB<T> a1, ABB<T> a2){ // Complejidad O(N(log(N)) o O(N^2) arbol dejenerado
         ABB<T> res = new ABB<T>();
         // Copia los elementos de a1 al nuevo árbol res
         Iterador<T> iteradorA1 = a1.iterador();
-        while (iteradorA1.haySiguiente()) {
+        while (iteradorA1.haySiguiente()) { // O(N)
             T valorActual = iteradorA1.siguiente();
-            res.insertar(valorActual);
+            res.insertar(valorActual); // O(N) arbol degenerado / O(Log(N))
         }
         // Agrega los elementos de a2 al nuevo árbol res
         Iterador<T> iteradorA2 = a2.iterador();
-        while (iteradorA2.haySiguiente()) {
+        while (iteradorA2.haySiguiente()) { // O(N)
             T valorActual = iteradorA2.siguiente();
-            res.insertar(valorActual);
+            res.insertar(valorActual); // O(N) arbol degenerado / O(Log(N))
         }
         return res;
     }
