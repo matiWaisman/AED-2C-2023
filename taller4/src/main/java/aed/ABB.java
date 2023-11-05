@@ -299,7 +299,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
         return new ABB_Iterador();
     }
 
-    // Extra Ejercicio 2 guia 7
+    // Extra Ejercicio 2 Guia 7
     public ABB<T> interseccion(ABB<T> a1, ABB<T> a2){ // Complejidad O(N(log(N))^2) o O(N^3) arbol dejenerado
         ABB<T> res = new ABB<T>();
         Iterador<T> iterador = a1.iterador();
@@ -315,7 +315,7 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
     public ABB<T> union(ABB<T> a1, ABB<T> a2){ // Complejidad O(N(log(N)) o O(N^2) arbol dejenerado
         ABB<T> res = new ABB<T>();
         // Copia los elementos de a1 al nuevo árbol res
-        Iterador<T> iteradorA1 = a1.iterador();
+        Iterador<T> iteradorA1 = a1.iterador();  
         while (iteradorA1.haySiguiente()) { // O(N)
             T valorActual = iteradorA1.siguiente();
             res.insertar(valorActual); // O(N) arbol degenerado / O(Log(N))
@@ -327,6 +327,89 @@ public class ABB<T extends Comparable<T>> implements Conjunto<T> {
             res.insertar(valorActual); // O(N) arbol degenerado / O(Log(N))
         }
         return res;
+    }
+
+    // Extra Ejercicio 6 Guia 7
+
+    public int altura(){
+        return calcularAltura(_raiz);
+    }
+
+
+    // Complejidad O(N)
+    private int calcularAltura(Nodo actual){
+        if(actual == null){
+            return 0;
+        }
+        if(actual.valor == null){
+            return 0;
+        }
+        int alturaIzquierda = calcularAltura(actual.izq);
+        int alturaDerecha = calcularAltura(actual.derecha);
+        if(alturaIzquierda > alturaDerecha){
+            return alturaIzquierda + 1;
+        }
+        else{
+            return alturaDerecha + 1;
+        }
+    }
+
+    private int cantidadNodos(Nodo actual){
+        if(actual == null){
+            return 0;
+        }
+        return cantidadNodos(actual.izq) + cantidadNodos(actual.derecha) + 1;
+    }
+    
+
+    
+    // Esta implementacion falla cuando hay algun intercalado, onda el arbol 50, 45, 44, 60, 59 pq a entre el 44 y el 59 hay un null
+
+    public boolean estaCompleto(){
+        if(_raiz == null){
+            return true;
+        }
+        if(_raiz.valor == null){
+            return true;
+        }
+        return calcularCompleto(_raiz);
+    }
+
+    private boolean calcularCompleto(Nodo actual){
+        if(actual == null){
+            return true;
+        }
+        if(actual.valor == null){
+            return true;
+        }
+        int alturaIzquierda = calcularAltura(actual.izq);
+        int alturaDerecha = calcularAltura(actual.derecha);
+        boolean seCumple = false;
+        if((alturaIzquierda == alturaDerecha || alturaIzquierda == alturaDerecha + 1) && cantidadNodos(actual.izq) >= cantidadNodos(actual.derecha)){
+            seCumple = true;
+        }
+        return seCumple && calcularCompleto(actual.izq) && calcularCompleto(actual.derecha);
+    }
+
+    public boolean estaCompleto2(){
+        boolean encontreFalse = false;
+        Queue<Nodo> fila = new LinkedList<>();
+        fila.offer(_raiz);
+
+        while(!fila.isEmpty()){
+            Nodo actual = fila.poll();
+            if(actual == null){
+                encontreFalse = true;
+            }
+            else{
+                if(encontreFalse == true){
+                    return false;
+                }
+                fila.offer(actual.izq);
+                fila.offer(actual.derecha);
+            }
+        }
+        return true;
     }
 
 }
