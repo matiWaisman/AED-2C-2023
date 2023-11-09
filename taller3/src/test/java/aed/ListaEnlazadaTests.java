@@ -331,5 +331,124 @@ class ListaEnlazadaTests {
         assertTrue(it.hayAnterior());
         assertEquals(44, it.anterior());
     }
+    @Test
+    void estaOrdenada(){
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        lista.agregarAtras(6);
+        lista.agregarAtras(7);
+        lista.agregarAtras(8);
+        lista.agregarAtras(1);
+        assertEquals(false, lista.estaOrdenado(lista));
+    }
 
+    @Test
+    void agregarOrdenado(){
+        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        lista.agregarOrdenado(1);
+        lista.agregarOrdenado(10);
+        lista.agregarOrdenado(3);
+        lista.agregarOrdenado(2);
+        assertEquals(true, lista.estaOrdenado(lista));
+    }
+
+    @Test
+    void unionO1(){
+        ListaEnlazada<Integer> lista1 = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista2 = new ListaEnlazada<>();
+        lista1.agregarOrdenado(1);
+        lista1.agregarOrdenado(10);
+        lista1.agregarOrdenado(3);
+        lista1.agregarOrdenado(2);
+
+        lista2.agregarOrdenado(13);
+        lista2.agregarOrdenado(11);
+        lista2.agregarOrdenado(20);
+
+        ListaEnlazada<Integer> listaRes = new  ListaEnlazada<>();
+        listaRes = listaRes.unionListas(lista1, lista2);
+        assertEquals(true, listaRes.estaOrdenado(listaRes));
+    }
+
+    @Test 
+    void unionON(){
+        ListaEnlazada<Integer> lista1 = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista2 = new ListaEnlazada<>();
+        lista1.agregarOrdenado(1);
+        lista1.agregarOrdenado(10);
+        lista1.agregarOrdenado(3);
+        lista1.agregarOrdenado(2);
+        
+        lista2.agregarOrdenado(5);
+        lista2.agregarOrdenado(6);
+        lista2.agregarOrdenado(20);
+        
+        ListaEnlazada<Integer> listaRes = new  ListaEnlazada<>();
+        listaRes = listaRes.unionListas(lista1, lista2);
+        assertEquals(true, listaRes.estaOrdenado(listaRes));
+    }
+
+    @Test
+    void interseccionO1(){
+        ListaEnlazada<Integer> lista1 = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista2 = new ListaEnlazada<>();
+        lista1.agregarOrdenado(1);
+        lista1.agregarOrdenado(10);
+        lista1.agregarOrdenado(3);
+        lista1.agregarOrdenado(2);
+
+        lista2.agregarOrdenado(13);
+        lista2.agregarOrdenado(11);
+        lista2.agregarOrdenado(20);
+
+        ListaEnlazada<Integer> listaRes = new  ListaEnlazada<>();
+        listaRes = listaRes.interseccionListas(lista1, lista2);
+        assertEquals(null, listaRes);
+    }
+
+    @Test
+    void interseccionNulaON(){
+        ListaEnlazada<Integer> lista1 = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista2 = new ListaEnlazada<>();
+        lista1.agregarOrdenado(1);
+        lista1.agregarOrdenado(10);
+        lista1.agregarOrdenado(3);
+        lista1.agregarOrdenado(2);
+
+        lista2.agregarOrdenado(5);
+        lista2.agregarOrdenado(6);
+        lista2.agregarOrdenado(20);
+        
+
+        ListaEnlazada<Integer> listaRes = new  ListaEnlazada<>();
+        listaRes = listaRes.interseccionListas(lista1, lista2);
+        assertEquals(null, listaRes);
+
+    }
+
+    @Test
+    void interseccionON(){
+        ListaEnlazada<Integer> lista1 = new ListaEnlazada<>();
+        ListaEnlazada<Integer> lista2 = new ListaEnlazada<>();
+        lista1.agregarOrdenado(1);
+        lista1.agregarOrdenado(10);
+        lista1.agregarOrdenado(3);
+        lista1.agregarOrdenado(5);
+        lista1.agregarOrdenado(2);
+        assertEquals(true, lista1.estaOrdenado(lista1));
+
+        lista2.agregarOrdenado(5);
+        lista2.agregarOrdenado(6);
+        lista2.agregarOrdenado(20);
+        lista2.agregarOrdenado(2);
+        lista2.agregarOrdenado(10);
+        assertEquals(true, lista2.estaOrdenado(lista2));
+
+        ListaEnlazada<Integer> listaRes = new  ListaEnlazada<>();
+        listaRes = listaRes.interseccionListas(lista1, lista2);
+        assertEquals(true, listaRes.estaOrdenado(listaRes));
+        assertEquals("[2, 5, 10]", listaRes.toString());
+
+    }
 }
+
+

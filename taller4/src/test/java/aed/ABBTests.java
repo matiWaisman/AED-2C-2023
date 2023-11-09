@@ -215,6 +215,32 @@ class ABBTests {
         return NCLAVES * ((i * i - 100 * i) % NCLAVES) + i;
     }
 
+    @Test 
+    void testAltura(){
+        ABB<Integer> c = new ABB<Integer>();
+        c.insertar(50);
+        c.insertar(45);
+        c.insertar(35);
+        c.insertar(60);
+        c.insertar(59);
+        c.insertar(58);
+        c.insertar(61);
+        assertEquals(4, c.altura());
+    }
+
+    @Test 
+    void testCompleto(){
+        ABB<Integer> c = new ABB<Integer>();
+        assertEquals(true, c.estaCompleto());
+        c.insertar(50);
+        c.insertar(45);
+        c.insertar(44);
+        c.insertar(60);
+        c.insertar(59);
+        c.insertar(46);
+        assertEquals(false, c.estaCompleto2());
+    }
+
     @Test
     void stress() {
 
