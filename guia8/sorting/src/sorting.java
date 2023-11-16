@@ -92,7 +92,50 @@ public class sorting {
     }
 
     // Ejercicio 5
-    public static void ordenarPorApariciones(int[]l){
-        
+    public static int[] ordenarPorApariciones(int[]l){
+        // Ordeno la lista
+        int[] listaOrdenada = l;
+        heapSort(listaOrdenada);
+        List<Integer>[] buckets = bucketearPorApariciones(l);
+
+
+        return res;
+    }
+
+    // Tiene que recibir una lista ordenada 
+    public static List<Integer>[] bucketearPorApariciones(int[]l){
+        List<Integer>[] res = new LinkedList[l.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = new LinkedList<>();
+        }
+
+        int aparicionesActuales = 0;
+        int elementoActual = l[0];
+        for(int i = 1; i < l.length; i++){
+            if(l[i] == elementoActual){
+                aparicionesActuales++;
+            }
+            else{
+                res[aparicionesActuales].add(elementoActual);
+                aparicionesActuales = 0;
+                elementoActual = l[i];
+            }
+        }
+        // Para que agregue al ultimo de la lista
+        res[aparicionesActuales].add(elementoActual);
+        return res;
+    }
+
+    public static List<Integer> desbucketear(List<Integer>[] l, int longitud){
+        List<Integer> res = new LinkedList<>();
+        for(int i = 0; i < l.length; i++){
+            int cantidadElementos = i + 1;
+            if(l[i] != null){
+                for(int j = 0; j <= cantidadElementos; i++){
+                    
+                }
+            }
+        }
+        return res;
     }
 }
