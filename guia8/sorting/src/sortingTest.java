@@ -18,19 +18,41 @@ public class sortingTest {
 
     @Test
     public void testOrdenarPorApariciones() {
-        int[] lista = new int[]{1, 3, 1, 7, 2, 7, 1, 7, 3};
-        int[] respuestaEsperada = new int[]{1, 1,1,2,3,3,7,7,7};
+        // Caso de prueba original
+        int[] listaOriginal = new int[]{7, 3, 1, 1, 2, 7, 1, 7, 3};
+        int[] respuestaEsperadaOriginal = new int[]{1, 1, 1, 7, 7, 7, 3, 3, 2};
+        assertArrayEquals(respuestaEsperadaOriginal, sorting.ordenarPorApariciones(listaOriginal));
 
-        assertArrayEquals(respuestaEsperada, sorting.ordenarPorApariciones(lista));
+        // Caso de prueba con lista vacía
+        int[] listaVacia = new int[]{};
+        int[] respuestaEsperadaVacia = new int[]{};
+        assertArrayEquals(respuestaEsperadaVacia, sorting.ordenarPorApariciones(listaVacia));
 
-        List<Integer>[] matrizDeListas = sorting.bucketearPorApariciones(respuestaEsperada);
-       
-        List<Integer> listaPos0 = Arrays.asList(2);
-        List<Integer> listaPos1 = Arrays.asList(3);
-        List<Integer> listaPos2 = Arrays.asList(1, 7);
-        
-        assertEquals(listaPos0, matrizDeListas[0]);
-        assertEquals(listaPos1, matrizDeListas[1]);
-        assertEquals(listaPos2, matrizDeListas[2]);
+        // Caso de prueba con un solo elemento
+        int[] listaUnElemento = new int[]{5};
+        int[] respuestaEsperadaUnElemento = new int[]{5};
+        assertArrayEquals(respuestaEsperadaUnElemento, sorting.ordenarPorApariciones(listaUnElemento));
+
+        // Caso de prueba con todos los elementos iguales
+        int[] listaTodosIguales = new int[]{4, 4, 4, 4, 4};
+        int[] respuestaEsperadaTodosIguales = new int[]{4, 4, 4, 4, 4};
+        assertArrayEquals(respuestaEsperadaTodosIguales, sorting.ordenarPorApariciones(listaTodosIguales));
+
+        // Caso de prueba con algunos elementos iguales y otros diferentes
+        int[] listaConDuplicados = new int[]{2, 1, 3, 1, 2, 3, 4, 4, 5};
+        int[] respuestaEsperadaConDuplicados = new int[]{1, 1, 2, 2, 3, 3, 4, 4, 5};
+        assertArrayEquals(respuestaEsperadaConDuplicados, sorting.ordenarPorApariciones(listaConDuplicados));
     }
+
+    @Test
+    public void testOrdenarEscaleras() {
+        // Caso de prueba original
+        int[] listaOriginal = new int[]{5,6,8,9,10,7,8,9,20,15};
+        int[] respuestaEsperadaOriginal = new int[]{1, 1, 1, 7, 7, 7, 3, 3, 2};
+        assertArrayEquals(respuestaEsperadaOriginal, sorting.ordenarEscaleras(listaOriginal));
+
+        
+    }
+
+
 }
