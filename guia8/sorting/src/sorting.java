@@ -228,17 +228,21 @@ public class sorting {
     }
 
     // Ejercicio 6
-    // Idea: armar tuplas con el primer elemento y despues la longitud de la escalera, ahi ordeno por la longitud de la escalera con merge.
+    // Idea: armar tuplas con el primer elemento y despues la longitud de la escalera, ahi ordeno por la longitud de la escalera con merge y despues desarollo la lista de nuevo y la paso a array
+    //O(NLog(N))
     public static int[] ordenarEscaleras(int[]l){
+        if(l.length == 0){
+            return new int[0];
+        }
         int[] res = new int[l.length];
-        for(int i = 0; i < res.length; i++){
+        for(int i = 0; i < res.length; i++){ // O(N)
             res[i] = l[i];
         }
-        Queue<tupla> listaEscaleras = armarListaEscaleras(l);
-        tupla[] arrayEscaleras = queueToArray(listaEscaleras);
-        tupla[] escalerasOrdenadasPorLargo = ordenarTuplasPorApariciones(arrayEscaleras);
-        Queue<Integer> listaFinal = rearmarEscaleras(escalerasOrdenadasPorLargo);
-        res = listaToArray(listaFinal);
+        Queue<tupla> listaEscaleras = armarListaEscaleras(l); // O(N)
+        tupla[] arrayEscaleras = queueToArray(listaEscaleras); // O(N)
+        tupla[] escalerasOrdenadasPorLargo = ordenarTuplasPorApariciones(arrayEscaleras); // O(NLog(N))
+        Queue<Integer> listaFinal = rearmarEscaleras(escalerasOrdenadasPorLargo); // O(N)
+        res = listaToArray(listaFinal); // O(N)
         return res;
     } 
 
@@ -268,6 +272,121 @@ public class sorting {
                 res.offer(elementoActual);
                 elementoActual += 1;
             }
+        }
+        return res;
+    }
+
+    // Ejercicio 8
+
+    // Ejercicio 9
+    // Idea: Hago counting sort dos veces, como la cantidad de notas esta acotada del 1 al 10, toda la parte de categorizar las notas es O(N), y como tambien los generos estan acotados tambien es O(N)
+    public static alumno[] ordenarPlanilla(alumno[] original){
+        alumno[] res = new alumno[original.length];
+        for(int i = 0; i < original.length; i++){ // O(N)
+            res[i] = original[i];
+        }
+        Queue<alumno>[] bucketsPorNotas = bucketearPorNotas(res); // O(N)
+        alumno[] notasOrdenadasSinDisticionDeGenero = desbucketearNotas(bucketsPorNotas, original.length); // O(N)
+        Queue<alumno>[] bucketsPorGenero = bucketearPorGenero(notasOrdenadasSinDisticionDeGenero); // O(N)
+        res = desbucketearGenero(bucketsPorGenero, original.length); // O(N)
+        return res; 
+    }
+
+    public static Queue<alumno>[] bucketearPorNotas(alumno[] l){
+        Queue<alumno>[] res = new LinkedList[10]; 
+        for(int i = 0; i < 10; i++){
+            res[i] = new LinkedList<>();
+        }
+        for(int i = 0; i < l.length; i++){
+            res[l[i].getNota() - 1].offer(l[i]);
+        }
+        return res;
+    } 
+
+    public static alumno[] desbucketearNotas(Queue<alumno>[] buckets, int cantidadDeAlumnos){
+        alumno[] res = new alumno[cantidadDeAlumnos];
+        int elementoActual = 0;
+        for(int i = 0; i < buckets.length; i++){
+            while(buckets[i].isEmpty() != true){
+                res[elementoActual] = buckets[i].poll();
+                elementoActual ++;
+            }
+        }
+        return res;
+    }
+
+    // Requiere que ya venga ordenado por notas
+    public static Queue<alumno>[] bucketearPorGenero(alumno[] alumnos){
+        Queue<alumno>[] res = new LinkedList[2]; // Como son entre muchas comillas dos generos la primera lista es para femenino y la segunda para masculino. En el B que te piden que hayan mas de un genero haria una lista de nGeneros que sigue estando acotado
+        for(int i = 0; i < 2; i++){
+            res[i] = new LinkedList<>();
+        }
+        for(int i = 0; i < alumnos.length; i++){
+            alumno actual = alumnos[i];
+            if(actual.getGenero() == "masculino"){
+                res[1].offer(actual);
+            }
+            else{
+                res[0].offer(actual);
+            }
+        }
+        return res;
+    }
+
+    public static alumno[] desbucketearGenero(Queue<alumno>[] buckets, int cantidadAlumnos){
+        alumno[] res = new alumno[cantidadAlumnos];
+        int alumnoActual = 0;
+        for(int i = 0; i < buckets.length; i++){
+            while(buckets[i].isEmpty() != true){
+                res[alumnoActual] = buckets[i].poll();
+                alumnoActual ++;
+            }
+        }
+        return res;
+    }
+
+    // Ejercicio 10
+
+    // Ejercicio 11
+    // Idea: Counting sort de cabeza
+    // Complejidad: O(N + K) donde K al ser una constante queda O(N), porque la cantidad de operaciones esta acotada
+    public static int[] ordenarEnRango(int[] original, int k){
+        int[] res;
+        int[] arrayApariciones = contarApariciones(original, k); // O(K)
+        Queue<Integer> cola = armarCola(arrayApariciones); // O(K)
+        res = colaToArray(cola, original.length); // O(N)
+        return res;
+    }
+
+    public static int[] contarApariciones(int[] original, int k){
+        int[] res = new int[k]; 
+        for(int i = 0; i < k; i++){
+            res[i] = 0;
+        }
+        for(int i = 0; i < original.length; i++){
+            int posicionActual = original[i] - 1;
+            res[posicionActual] += 1;
+        }
+        return res;
+    }
+
+    public static Queue<Integer> armarCola(int[] apariciones){
+        Queue<Integer> res = new LinkedList();
+        for(int i = 0; i < apariciones.length; i++){
+            int aparicionesActual = apariciones[i];
+            for(int j = 0; j < aparicionesActual; j++){
+                res.offer(i + 1);
+            }
+        }
+        return res;
+    }
+
+    public static int[] colaToArray(Queue<Integer> cola, int cantidadElementos){
+        int[] res = new int[cantidadElementos];
+        int elementoActual = 0;
+        while(cola.isEmpty() != true){
+            res[elementoActual] = cola.poll();
+            elementoActual ++;
         }
         return res;
     }

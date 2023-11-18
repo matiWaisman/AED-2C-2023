@@ -46,13 +46,53 @@ public class sortingTest {
 
     @Test
     public void testOrdenarEscaleras() {
-        // Caso de prueba original
-        int[] listaOriginal = new int[]{5,6,8,9,10,7,8,9,20,15};
-        int[] respuestaEsperadaOriginal = new int[]{1, 1, 1, 7, 7, 7, 3, 3, 2};
+        int[] listaOriginal = new int[]{5, 6, 8, 9, 10, 7, 8, 9, 20, 15};
+        int[] respuestaEsperadaOriginal = new int[]{7, 8, 9, 8, 9, 10, 5, 6, 15, 20};
         assertArrayEquals(respuestaEsperadaOriginal, sorting.ordenarEscaleras(listaOriginal));
-
-        
     }
 
+    @Test
+    public void ordenarPlanilla() {
+        alumno ana = new alumno(10, "femenino", "Ana");
+        alumno juan = new alumno(6, "masculino", "Juan");
+        alumno rita = new alumno(6, "femenino", "Rita");
+        alumno paula = new alumno(7, "femenino", "Paula");
+        alumno jose = new alumno(7, "masculino", "Jose");
+        alumno pedro = new alumno(8, "masculino", "Pedro");
+
+        alumno[] planillaOriginal = {ana, juan, rita, paula, jose, pedro};
+
+        alumno[] planillaEsperada = {rita, paula, ana, juan, jose, pedro};
+
+        // Llamada a la función de ordenación
+        planillaOriginal = sorting.ordenarPlanilla(planillaOriginal);
+
+        assertArrayEquals(planillaEsperada, planillaOriginal);
+    }
+
+    @Test
+    public void testOrdenarEnRango() {
+        // Caso original
+        int[] listaOriginal1 = {9, 5, 2, 8, 3};
+        int[] listaEsperada1 = {2, 3, 5, 8, 9};
+        listaOriginal1 = sorting.ordenarEnRango(listaOriginal1, 9);
+        assertArrayEquals(listaEsperada1, listaOriginal1);
+
+        int[] listaOriginal2 = {3, 5, 2, 5, 3};
+        int[] listaEsperada2 = {2, 3, 3, 5, 5};
+        listaOriginal2 = sorting.ordenarEnRango(listaOriginal2, 5);
+        assertArrayEquals(listaEsperada2, listaOriginal2);
+
+        int[] listaOriginal3 = {7, 7, 7, 7, 7};
+        int[] listaEsperada3 = {7, 7, 7, 7, 7};
+        listaOriginal3 = sorting.ordenarEnRango(listaOriginal3, 7);
+        assertArrayEquals(listaEsperada3, listaOriginal3);
+
+        int[] listaOriginal4 = {1, 2, 3, 4, 5};
+        int[] listaEsperada4 = {1, 2, 3, 4, 5};
+        listaOriginal4 = sorting.ordenarEnRango(listaOriginal4, 5);
+        assertArrayEquals(listaEsperada4, listaOriginal4);
+
+    }
 
 }
