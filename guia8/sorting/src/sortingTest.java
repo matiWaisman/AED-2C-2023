@@ -92,7 +92,37 @@ public class sortingTest {
         int[] listaEsperada4 = {1, 2, 3, 4, 5};
         listaOriginal4 = sorting.ordenarEnRango(listaOriginal4, 5);
         assertArrayEquals(listaEsperada4, listaOriginal4);
+    }
 
+    @Test
+    public void ordenarDatos(){
+        int[] listaOriginal1 = {15, 22, 20, 40, 35, 41, 10, 22, 35};
+        int[] listaEsperada1 = {10, 15, 20, 22, 22, 35, 35, 40, 41};
+        listaOriginal1 = sorting.ordenarDatos(listaOriginal1);
+        assertArrayEquals(listaEsperada1, listaOriginal1);
+    }
+
+    @Test
+    public void ordenarTuplasIntString() {
+        // Crear tuplas para la entrada
+        tuplaIntStr primerElemento = new tuplaIntStr(29, "Pepito");
+        tuplaIntStr segundoElemento = new tuplaIntStr(19, "Ana");
+        tuplaIntStr tercerElemento = new tuplaIntStr(25, "Juan");
+        tuplaIntStr cuartoElemento = new tuplaIntStr(25, "Maria");
+        tuplaIntStr quintoElemento = new tuplaIntStr(29, "Papita");
+
+        // Crear la lista de entrada desordenada
+        tuplaIntStr[] listaOriginal = {segundoElemento, quintoElemento, primerElemento, cuartoElemento, tercerElemento};
+
+        // Llamar al método de ordenación
+        listaOriginal = sorting.ordenarTuplas(listaOriginal);
+
+        // Crear la lista esperada ordenada por los strings
+        tuplaIntStr[] listaEsperada = {segundoElemento, tercerElemento, cuartoElemento, quintoElemento, primerElemento};
+        
+
+        // Verificar que la lista de salida es igual a la lista esperada
+        assertArrayEquals(listaEsperada, listaOriginal);
     }
 
 }
