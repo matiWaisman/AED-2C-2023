@@ -1,5 +1,7 @@
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,4 +127,64 @@ public class sortingTest {
         assertArrayEquals(listaEsperada, listaOriginal);
     }
 
+    @Test
+    public void testOrdenarMultiplos() {
+        int[] inputArray1 = {5, 3, 7, 2};
+        int k1 = 3;
+        int[] expectedResult1 = {2, 3, 4, 5, 6, 6, 7,  9, 10, 14, 15, 21};
+        int[] result1 = sorting.ordenarMultiplos(inputArray1, k1);
+        assertArrayEquals(expectedResult1, result1);
+
+        
+        int[] inputArray2 = {0, 1, 4};
+        int k2 = 2;
+        int[] expectedResult2 = {0, 0, 1, 2, 4, 8};
+        int[] result2 = sorting.ordenarMultiplos(inputArray2, k2);
+        assertArrayEquals(expectedResult2, result2);
+
+        
+        int[] inputArray3 = {3, 3, 3};
+        int k3 = 2;
+        int[] expectedResult3 = {3, 3, 3, 6, 6, 6};
+        int[] result3 = sorting.ordenarMultiplos(inputArray3, k3);
+        assertArrayEquals(expectedResult3, result3);
+    }
+
+    @Test 
+    public void testHayAgujeros(){
+        int[] input1 = {5, 6, 7, 8, 9};
+        assertFalse(sorting.tieneAgujeros(input1));
+
+        int[] input2 = {9,5,6,8,8,9,7};
+        assertFalse(sorting.tieneAgujeros(input2));
+
+        int[] input3 = {9,4,6,8,8,9,7};
+        assertTrue(sorting.tieneAgujeros(input3));
+    }
+
+    @Test
+    public void testTerminarDeOrdenar(){
+        int[] input1 = sorting.terminarDeOrdenar(new int[]{1,2,3,4,5});
+        int[] output1 = {1,2,3,4,5};
+        assertArrayEquals(input1, output1);
+
+        int[] input2 = sorting.terminarDeOrdenar(new int[]{2,1,4,3,5});
+        int[] output2 = {1,2,3,4,5};
+        assertArrayEquals(input2, output2);
+    }
+
+    @Test
+    public void testNMenoresQueN(){
+        int[] input = {3,2,4,2,1};
+        int[] rtaEsperada = {1,2,2,3,4};
+        input = sorting.ordenarNMenoresQueN(input);
+        assertArrayEquals(input, rtaEsperada);
+    }
+
+    @Test 
+    public void testNMenoresQueNCuadrado(){
+        int[] input = {40,25,29,83,12,50,67,13,99,76};
+        int[] rtaEsperada = {12,13,25,29,40,50,67,76,83,99};
+        assertArrayEquals(rtaEsperada, sorting.ordenarNMenoresQueNCuadrado(input));
+    }
 }

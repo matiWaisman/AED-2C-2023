@@ -1,9 +1,10 @@
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
 public class sorting {
-    // Ejercicio 3 implementacion
+    // Ejercicio 3 
     public static int[] kElementosMasChicos(int k, int[]lista){
         int[] res = new int[k];
         // O(N)
@@ -277,6 +278,7 @@ public class sorting {
     }
 
     // Ejercicio 8
+
 
     // Ejercicio 9
     // Idea: Hago counting sort dos veces, como la cantidad de notas esta acotada del 1 al 10, toda la parte de categorizar las notas es O(N), y como tambien los generos estan acotados tambien es O(N)
@@ -583,6 +585,226 @@ public class sorting {
     }
 
 
+    // Ejercicio 14
+    // Idea: Primero hacerme el array de cada elemento de a multiplicado por k y despues ordenarla 
+    // Preguntar si esta bien esta solucion, es O(NKLog(NK)), no O(NKLog(N))
+    /*
+    public static int[] ordenarMultiplos(int[] a, int k){
+        int[] res = armarArrayConMultiplos(a,k);
+        heapSort(res);
+        return res;
+    }
 
+    public static int[] armarArrayConMultiplos(int[] a, int k){
+        int[] res = new int[a.length * k];
+        int posicionActual = 0;
+        for(int i = 0; i < a.length; i++){
+            int elementoActual = a[i];
+            for(int j = 1; j <= k; j++){
+                res[posicionActual] = elementoActual * j;
+                posicionActual ++;
+            }
+        }
+        return res;
+    }
+
+    */
+
+    public static int[] ordenarMultiplos(int[] a, int k){
+        int[] originalesOrdenados = new int[a.length];
+        for(int i = 0; i < originalesOrdenados.length; i++){ //O(Tamaño original) == O(N)
+            originalesOrdenados[i] = a[i];
+        }
+        heapSort(originalesOrdenados); //O(NLog(N))
+        int[][] arrayDeMultiplicaciones = new int[a.length][];
+        for(int i = 0; i < arrayDeMultiplicaciones.length; i++){ //O(NK)
+            arrayDeMultiplicaciones[i] = armarArrayConMultiplos(originalesOrdenados[i], k);
+        }
+        int [] res = unirListasOrdenadas(arrayDeMultiplicaciones, k); //O(NKLog(N))
+        return res;
+    }
+
+    public static int[] armarArrayConMultiplos(int e, int k){
+        int[] res = new int[k];
+        for(int i = 1; i <= k; i++){
+            res[i - 1] = e * i;
+        }
+        return res;
+    }
+
+    // Recorro N elementos por K particiones en una cantidad logaritmica respecto de la cantidad de elementos.
+    public static int[] unirListasOrdenadas(int[][] a, int k){
+        if(a.length == 1){
+            return a[0];
+        }
+        else{
+            int medio = a.length / 2;
+            int[][] mitadIzquierda = Arrays.copyOfRange(a, 0, medio);
+            int[][] mitadDerecha = Arrays.copyOfRange(a, medio, a.length);
+
+            int[] izquierda = unirListasOrdenadas(mitadIzquierda, k);
+            int[] derecha = unirListasOrdenadas(mitadDerecha, k);
+
+            return merge(izquierda, derecha);
+        }
+    }
+
+    //O(Cantidad de elementos totales)
+    public static int[] merge(int[] a, int[] b){
+        int[] res = new int[a.length + b.length];
+        int i = 0; // Recorre a
+        int j = 0; // Recorre b
+        int k = 0; // Recorre res
+
+        while(k < res.length && i < a.length && j < b.length){
+            if(a[i] < b[j]){
+                res[k] = a[i];
+                i++;
+            }
+            else{
+                res[k] = b[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < a.length) {
+            res[k] = a[i];
+            i++;
+            k++;
+        }
     
+        while (j < b.length) {
+            res[k] = b[j];
+            j++;
+            k++;
+        }
+
+        return res;
+    }
+
+    // Ejercicio 15
+    public static boolean tieneAgujeros(int[] array){
+        int max = encontrarMaximo(array); // O(N)
+        int min = encontrarMinimo(array); // O(N)
+        boolean[] yaLoEncontre = new boolean[max - min + 1];
+        for(int i = 0; i < array.length; i++){ //O(N)
+            int elementoActual = array[i];
+            if(yaLoEncontre[elementoActual - min] == false){
+                yaLoEncontre[elementoActual - min] = true;
+            }
+        }
+        for(int i = 0; i < yaLoEncontre.length; i++){ // O(N)
+            if(yaLoEncontre[i] == false){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Ejercicio 16 Con usar counting esta bien?
+    public static int[] raroSort(int[] arr){
+        int max = encontrarMaximo(arr);
+        return arr;
+    }
+
+    // Ejercicio 17
+
+    public static int[] terminarDeOrdenar(int[] arr){
+        int[] res = new int[arr.length];
+        for(int i = 0; i < res.length; i++){
+            res[i] = arr[i];
+        }
+        for(int i = 1; i < res.length; i++){
+            if(arr[i] < arr[i-1]){
+                int aux = res[i];
+                res[i] = res[i-1];
+                res[i-1] = aux;
+            }
+        }
+        return res;
+    }
+
+    // Ejercicio 18
+    // A
+    // Como la cantidad de "buckets" esta dada por el tamaño del array la complejidad va a ser O(N)
+    public static int[] ordenarNMenoresQueN(int arr[]){
+        int[] buckets = countingMenoresQueN(arr);
+        int[] res = aparicionesToArray(buckets, arr.length);
+        return res;
+    }
+
+    public static int[] countingMenoresQueN(int arr[]){
+        int[] res = new int[arr.length];
+        for(int i = 0; i < arr.length; i++){
+            int elementoActual = arr[i];
+            res[elementoActual - 1] ++;
+        }
+        return res;
+    }
+
+    // Como la cantidad de buckets esta acotada por la cantidad de elementos es O(NK) donde K es una cte
+    public static int[] aparicionesToArray(int[] apariciones, int cantidadElementos){
+        int[] res = new int[cantidadElementos];
+        int elementoActual = 0;
+        for(int i = 0; i < apariciones.length; i++){
+            int j = 0;
+            while(j < apariciones[i]){
+                res[elementoActual] = i + 1;
+                j++;
+                elementoActual++; 
+            }
+        }   
+        return res;
+    }
+
+    // B
+    // Idea: usar el item anterior para cada digito, pero quemandome en la conversion de arrays, asi que la mayoria de las funciones las voy a tener que hacer nuevo
+    // Complejidad: O(Cant de digitos N^2 por N), como la cantidad de digitos esta acotada por la cantidad de elementos entonces es O(N)
+    // Este approach de hacer pasadas por cada digito es mas eficiente que el anterior si se que los numeros pueden ser hasta n^2 mas grandes.
+    // Por ejemplo si tengo una lista con los numeros {40,25,29,83,12,50,67,13,99,76} si hago el anterior tendria que hacer 99 posiciones de la lista y recorrerlas una por una, en cambio recorriendo por digito tengo que crear 20
+    public static int[] ordenarNMenoresQueNCuadrado(int[] arr){
+        int[] res = new int[arr.length];
+        for(int i = 0; i < arr.length; i++){
+            res[i] = arr[i];
+        }
+        int cantidadDeDigitos = String.valueOf(arr.length * arr.length).length();
+        for(int i = 1; i <= cantidadDeDigitos; i++){ // O(Cantidad de digitos de N cuadrado)
+            Queue<Integer>[] colas = countingPorDigito(res, i); // O(N)
+            res = colaEnterosToArray(colas, res.length); // O(N)
+        }
+        return res;
+    }
+
+    public static Queue<Integer>[] countingPorDigito(int[] arr, int digitoAVer){
+        Queue<Integer>[] res = new LinkedList[10];
+        for(int i = 0; i < 10; i++){
+            res[i] = new LinkedList<Integer>();
+        }
+        for(int i = 0; i < arr.length; i ++){
+            int numeroABucketear = arr[i];
+            res[obtenerDigito(numeroABucketear, digitoAVer)].offer(numeroABucketear);
+        }
+        return res;
+    }
+
+    public static int obtenerDigito(int numero, int posicion) {
+        int divisor = (int) Math.pow(10, posicion - 1);
+        int digito = (numero / divisor) % 10;
+        return digito;
+    }
+
+    public static int[] colaEnterosToArray(Queue<Integer>[] colas, int cantidadDeElementos){
+        int[] res = new int[cantidadDeElementos];
+        int elementoActual = 0;
+        for(int i = 0; i < colas.length; i++){
+            while(colas[i].isEmpty() == false){
+                res[elementoActual] = colas[i].poll();
+                elementoActual++;
+            }
+        }
+        return res;
+    }
+
+    // En el item C y la generalizacion seria lo mismo
 }
