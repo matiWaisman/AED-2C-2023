@@ -694,7 +694,7 @@ public class sorting {
                 yaLoEncontre[elementoActual - min] = true;
             }
         }
-        for(int i = 0; i < yaLoEncontre.length; i++){ // O(N)
+        for(int i = 0; i < yaLoEncontre.length; i++){ // O(Rango entre el minimo y el maximo)
             if(yaLoEncontre[i] == false){
                 return true;
             }
