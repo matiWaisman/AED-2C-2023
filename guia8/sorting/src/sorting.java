@@ -279,6 +279,22 @@ public class sorting {
 
     // Ejercicio 8
 
+    public static tupla[] arrayToCantidadApariciones(int[] a, int nPrima){
+        tupla[] res = new tupla[nPrima];
+        res[0] = new tupla(a[0], 1);
+        int elementoActual = 0;
+        for(int i = 1; i < a.length; i++){
+            if(a[i] == res[elementoActual].getValor()){
+                res[elementoActual] = new tupla(res[elementoActual].getValor(), res[elementoActual].getApariciones() + 1); 
+            }
+            else{
+                elementoActual++;
+                res[elementoActual] = new tupla(a[i], 1);
+            }
+        }
+        return res;
+    }
+
 
     // Ejercicio 9
     // Idea: Hago counting sort dos veces, como la cantidad de notas esta acotada del 1 al 10, toda la parte de categorizar las notas es O(N), y como tambien los generos estan acotados tambien es O(N)
